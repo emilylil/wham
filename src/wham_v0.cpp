@@ -145,6 +145,7 @@ Type objective_function<Type>::operator() ()
   PARAMETER_MATRIX(q_repars) //n_indices x 2 (sigma, rho)
   PARAMETER_VECTOR(log_F1);
   PARAMETER_MATRIX(F_devs);
+  PARAMETER(F_devs_sigma);
   PARAMETER_VECTOR(log_N1_pars); //length = n_ages or 2
   PARAMETER_VECTOR(log_NAA_sigma);
   PARAMETER_VECTOR(trans_NAA_rho); // rho_a, rho_y (length = 2)
@@ -700,6 +701,7 @@ Type objective_function<Type>::operator() ()
       }
     }
   }
+  nll -= dnorm(F_devs, 0, F_devs_sigma, 1);
   // Total mortality, Z = F + M (non-projection years only)
   for(int y = 0; y < n_years_model; y++) ZAA.row(y) = FAA_tot.row(y) + MAA.row(y);
 
@@ -715,8 +717,8 @@ Type objective_function<Type>::operator() ()
       if(a==0) NAA(0,0) = exp(log_N1_pars(0));
       else
       {
-        if(a == n_ages-1) NAA(0,a) = NAA(0,a-1)/(1.0 + exp(-MAA(0,a) - exp(log_N1_pars(1)) * FAA_tot(0,a)/FAA_tot(0,n_ages-1)));
-        else NAA(0,a) = NAA(0,a-1)* exp(-MAA(0,a) -  exp(log_N1_pars(1)) * FAA_tot(0,a)/FAA_tot(0,n_ages-1));
+        if(a == n_ages-1) NAA(0,a) = NAA(0,a-1)/(1.0 + exp(-MAA(0,a) - exp(log_N1_pars(1)) * FAA_tot(0,a)/FAA_tot(0,which_F_age(0)-1)));
+        else NAA(0,a) = NAA(0,a-1)* exp(-MAA(0,a) -  exp(log_N1_pars(1)) * FAA_tot(0,a)/FAA_tot(0,which_F_age(0)-1));
       }
     }
     SSB(0) += NAA(0,a) * waa(waa_pointer_ssb-1,0,a) * mature(0,a) * exp(-ZAA(0,a)*fracyr_SSB(0));
