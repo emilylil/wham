@@ -16,6 +16,6 @@ set_F = function(input, F_opts = NULL)
       input$par$F_devs = cbind(apply(log(cbind(F_opts$F)),2,diff))
     }
   } 
-  input$par$log_F1_sigma = log(0.2)
+  input$par$F_devs_sigma = log(0.2)
   return(input)
 }

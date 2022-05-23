@@ -702,7 +702,7 @@ Type objective_function<Type>::operator() ()
     }
   }
   Type sigma_F = exp(F_devs_sigma);
-  nll -= dnorm(F_devs, 0, sigma_F, 1);
+  nll -= dnorm(F_devs, 0.0, sigma_F, 1);
   // Total mortality, Z = F + M (non-projection years only)
   for(int y = 0; y < n_years_model; y++) ZAA.row(y) = FAA_tot.row(y) + MAA.row(y);
 
